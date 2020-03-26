@@ -12,13 +12,18 @@
     <title>Title</title>
 </head>
 <body>
+
+<% String g = "Good"; %>
+
 <div>
     students <br/>
     <%--<% List<Student> listStudent = (List<Student>) session.getAttribute("student");%>
     <% for (Student student: listStudent ) {%>
     <input  type="checkbox"  name="student" id="<%= student.getId()%>" value="<% student.getId();%>"/> <br/>
     <% }%>--%>
+
     <%
+
         /*List<Student> students = (List<Student>) request.getAttribute("student");*/
         List<Student> studentList = (List<Student>) session.getAttribute("studentList");
 
@@ -38,6 +43,10 @@
             out.println("<p>There are no users yet!</p>");
         }
     %>
+    <%=g%>
 </div>
 </body>
 </html>
+
+<% g = g+" Morning"; %>
+<%=g%>

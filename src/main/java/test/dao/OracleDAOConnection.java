@@ -3,6 +3,7 @@ package test.dao;
 import test.model.Student;
 
 import oracle.jdbc.OracleDriver;
+import weblogic.jndi.WLContext;
 
 
 import javax.naming.Context;
@@ -39,12 +40,9 @@ public class OracleDAOConnection implements DAOConnection {
 
     @Override
     public void connect() {
-        try {
-            connectWebLogic();
-        } catch (Exception e) {
-            connectOracleDriver();;
-        }
-
+        //connectTomcatc();
+       //connectOracleDriver();
+        connectWebLogic("JNDINamedbStudentWL");
     }
     //public void connect(String connectionUrl, String driverClass, String userName, String passWord) {
     public void connectOracleDriver() {
@@ -81,19 +79,16 @@ public class OracleDAOConnection implements DAOConnection {
         }
 
     }
-
     /*
      * https://docs.oracle.com/cd/A97329_03/web.902/a95879/ds.htm#1005742
-     * mvn com.oracle.maven:oracle-maven-sync:push -DoracleHome=c:\oracle\middleware\oracle_home\
-     * mvn install:install-file -DpomFile=oracle-maven-sync-12.2.1.pom -Dfile=oracle-maven-sync-12.2.1.jar
      */
-    public void connectWebLogic() {
+    public void connectWebLogic(String sourceName) {
 
         Context ic = null;
         try {
             String sp = "weblogic.jndi.WLInitialContextFactory";
             String file = "t3://localhost:7001";
-            String dataSourceName = "JNDINamedbStudentWL";
+            String dataSourceName = sourceName;//"JNDINamedbStudentWL";
 
             Hashtable env = new Hashtable();
             env.put(Context.INITIAL_CONTEXT_FACTORY, sp);
@@ -101,6 +96,7 @@ public class OracleDAOConnection implements DAOConnection {
             ic = new InitialContext(env);
 
             DataSource ds = (DataSource) ic.lookup(dataSourceName);
+            System.out.println("\nDataSource ds = " +  ds);
 
             connection =  ds.getConnection();
 
@@ -116,7 +112,24 @@ public class OracleDAOConnection implements DAOConnection {
             //e.printStackTrace();
         }
     }
+    public void connectTomcatc() {
 
+        try {
+            Context ctx = new InitialContext();
+            DataSource ds = (DataSource)ctx.lookup("java:comp/env/jdbc/test");
+            connection  = ds.getConnection();
+
+            DatabaseMetaData dma = connection.getMetaData();
+            // Печать сообщения об успешном соединении
+            System.out.println("\nTomcatc");
+            System.out.println("Connected to " + dma.getURL());
+            System.out.println("Driver " + dma.getDriverName());
+            System.out.println("Version " + dma.getDriverVersion());
+
+        } catch (NamingException | SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void connectOld() {
         driver = new OracleDriver();
