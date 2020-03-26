@@ -39,11 +39,11 @@ public class OracleDAOConnection implements DAOConnection {
 
     @Override
     public void connect() {
-        try {
+
             connectWebLogic();
-        } catch (Exception e) {
-            connectOracleDriver();;
-        }
+
+            //connectOracleDriver();
+
 
     }
     //public void connect(String connectionUrl, String driverClass, String userName, String passWord) {
