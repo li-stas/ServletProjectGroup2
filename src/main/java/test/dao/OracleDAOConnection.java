@@ -2,9 +2,6 @@ package test.dao;
 
 import test.model.Student;
 
-import oracle.jdbc.OracleDriver;
-
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -22,7 +19,7 @@ public class OracleDAOConnection implements DAOConnection {
     private Connection connection;
     private Statement statement;
     private ResultSet resultSet;
-    private Driver driver;
+
 
     private OracleDAOConnection () {
         super();
@@ -41,45 +38,6 @@ public class OracleDAOConnection implements DAOConnection {
     public void connect() {
 
             connectWebLogic();
-
-            //connectOracleDriver();
-
-
-    }
-    //public void connect(String connectionUrl, String driverClass, String userName, String passWord) {
-    public void connectOracleDriver() {
-        String connectionUrl = "";
-        String driverClass = "";
-        String userName = "";
-        String passWord = "";
-        if (connectionUrl.isEmpty()) {
-            connectionUrl = "jdbc:oracle:thin:@localhost:1521:xe";
-            driverClass = "oracle.jdbc.OracleDriver";
-            userName = "STUDENT";
-            passWord = "admin";
-        }
-        try {
-            Class.forName(driverClass);
-            DriverManager.setLogStream(System.out);
-            // Попытка соединения с драйвером. Каждый из
-            // зарегистрированных драйверов будет загружаться, пока
-            // не будет найден тот, который сможет обработать этот URL
-            connection = DriverManager.getConnection(connectionUrl, userName, passWord);
-            // Если соединиться не удалось, то произойдет exception (исключительная ситуация).
-            // Получить DatabaseMetaData объект и показать информацию о соединении
-            DatabaseMetaData dma = connection.getMetaData();
-            // Печать сообщения об успешном соединении
-            System.out.println("\njdbc");
-            System.out.println("Connected to " + dma.getURL());
-            System.out.println("Driver " + dma.getDriverName());
-            System.out.println("Version " + dma.getDriverVersion());
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
     }
 
     /*
@@ -87,7 +45,7 @@ public class OracleDAOConnection implements DAOConnection {
      * mvn com.oracle.maven:oracle-maven-sync:push -DoracleHome=c:\oracle\middleware\oracle_home\
      * mvn install:install-file -DpomFile=oracle-maven-sync-12.2.1.pom -Dfile=oracle-maven-sync-12.2.1.jar
      */
-    public void connectWebLogic() {
+   private void connectWebLogic() {
 
         Context ic = null;
         try {
@@ -115,21 +73,6 @@ public class OracleDAOConnection implements DAOConnection {
             System.out.println("\n" + e.getMessage());
             //e.printStackTrace();
         }
-    }
-
-
-    public void connectOld() {
-        driver = new OracleDriver();
-        try {
-            DriverManager.registerDriver(driver);
-            connection = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "STUDENT", "admin");
-            if (!connection.isClosed()) {
-                System.out.println("Connected successful!");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
     }
 
     @Override
